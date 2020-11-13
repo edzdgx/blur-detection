@@ -1,20 +1,15 @@
 # import the necessary packages
-import matplotlib.pyplot as plt
 from scipy.ndimage.filters import convolve
 import numpy as np
-import argparse
 import utils
-import cv2
 '''
 image: image to be determined whether blur or not
 size: The size of the radius around the centerpoint of the image
         for which we will zero out the FFT shift
 thresh: A value which the mean value of the magnitudes will be compared
         to for determining whether an image is considered blurry or not blurry
-vis: A boolean indicating whether to visualize/plot the original input image
-        and magnitude image using matplotlib
 '''
-def detect_blur_fft(image, size=60, thresh=10, vis=False):
+def detect_blur_fft(image, size=60, thresh=10):
     # grab the dimensions of the image and use the dimensions to
     # derive the center (x, y)-coordinates
     (h, w) = image.shape
@@ -26,28 +21,11 @@ def detect_blur_fft(image, size=60, thresh=10, vis=False):
     fft = np.fft.fft2(image)
     fftShift = np.fft.fftshift(fft)
 
-    if vis:
-        # compute the magnitude spectrum of the transform
-        magnitude = 20 * np.log(np.abs(fftShift))
-        # display the original input image
-        (fig, ax) = plt.subplots(1, 2, )
-        ax[0].imshow(image, cmap="gray")
-        ax[0].set_title("Input")
-        ax[0].set_xticks([])
-        ax[0].set_yticks([])
-        # display the magnitude image
-        ax[1].imshow(magnitude, cmap="gray")
-        ax[1].set_title("Magnitude Spectrum")
-        ax[1].set_xticks([])
-        ax[1].set_yticks([])
-        # show our plots
-        plt.show()
-
     # zero-out the center of the FFT shift (i.e., remove low
     # frequencies), apply the inverse shift such that the DC
     # component once again becomes the top-left, and then apply
     # the inverse FFT
-    fftShift[cY - size:cY + size, cX - size:cX + size] = 0
+    fftShift[cY-size : cY+size, cX-size : cX+size] = 0
     fftShift = np.fft.ifftshift(fftShift)
     recon = np.fft.ifft2(fftShift)
     # compute the magnitude spectrum of the reconstructed image,
@@ -71,7 +49,7 @@ def detect_blur_sobel(image, thresh):
     Gx = convolve(image, Sx)
     Gy = convolve(image, Sy)
 
-    # gradient magnitude S = np.sqrt(Gx ** 2 + Gy ** 2) # equilvalent to np.hypot()
+    # gradient magnitude S = np.sqrt(Gx**2 + Gy**2) # equilvalent to np.hypot()
     S = np.hypot(Gx, Gy)
 
     TEN = np.square(S)

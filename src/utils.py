@@ -1,5 +1,6 @@
 import os
 import cv2
+import numpy as np
 def load_images(folder):
     images = []
     for filename in os.listdir(folder):
@@ -43,3 +44,21 @@ def resize(image, width=None, height=None, inter=cv2.INTER_AREA):
 
     # return the resized image
     return resized
+
+def print_result(image, isBlur, mean, index, show=False):
+    image = np.dstack([image] * 3)
+    color = (0, 0, 255) if isBlur else (0, 255, 0)
+    text = "Blurry ({:.4f})" if isBlur else "Not Blurry ({:.4f})"
+    text = text.format(mean)
+    cv2.putText(image, text, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
+        color, 2)
+    print("[INFO] {:3.0f} {}".format(index,text))
+    # show the output image
+    if show:
+        cv2.imshow("Output", image)
+        cv2.waitKey(0)
+
+
+
+
+
