@@ -2,6 +2,7 @@
 from scipy.ndimage.filters import convolve
 import numpy as np
 import utils
+import cv2
 '''
 image: image to be determined whether blur or not
 size: The size of the radius around the centerpoint of the image
@@ -41,7 +42,14 @@ def detect_blur_laplacian(image, thresh):
     # blurry if lap is less than thresh
     return (lap, lap <= thresh)
 
-def detect_blur_sobel(image, thresh):
+def detect_blur_LoG(image, thresh):
+    # apply Gaussian filter to remove noise
+    gaus = cv2.GaussianBlur(image, (3,3), 0)
+    lap = utils.variance_of_laplacian(gaus)
+    # blurry if lap is less than thresh
+    return (lap, lap <= thresh)
+
+def detect_blur_Tenengrad(image, thresh):
     # 3x3 sobel operator
     Sx = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], np.float32)
     Sy = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]], np.float32)
@@ -52,17 +60,19 @@ def detect_blur_sobel(image, thresh):
     # gradient magnitude S = np.sqrt(Gx**2 + Gy**2) # equilvalent to np.hypot()
     S = np.hypot(Gx, Gy)
 
-    TEN = np.square(S)
-
-    S_VAR = S.var()
-
+    TEN = np.sum(S)
+    return (TEN, TEN <= thresh)
+    # TEN = np.square(S)
+    # S_VAR = S.var()
     # normalize S in range of (0, 255)
     # S = S / S.max() * 255
     # theta = np.arctan2(Gy, Gx)
-    return (S_VAR, S_VAR <= thresh)
+    # return (S_VAR, S_VAR <= thresh)
 
 
-
+def calc_laplacian_thresh(image, total):
+    lap = utils.variance_of_laplacian(image)
+    return total + lap
 
 
 
