@@ -50,25 +50,20 @@ def detect_blur_LoG(image, thresh):
     return (lap, lap <= thresh)
 
 def detect_blur_Tenengrad(image, thresh):
-    # 3x3 sobel operator
-    Sx = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], np.float32)
-    Sy = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]], np.float32)
 
-    Gx = convolve(image, Sx)
-    Gy = convolve(image, Sy)
+    # try using Gaussian to remove noise first
+    image = cv2.GaussianBlur(image, (3,3), 0)
+    Sobel_x=cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=3)
+    Sobel_y=cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize=3)
+    S = np.hypot(Sobel_x, Sobel_y).astype(np.uint8)
 
-    # gradient magnitude S = np.sqrt(Gx**2 + Gy**2) # equilvalent to np.hypot()
-    S = np.hypot(Gx, Gy)
+    cv2.imshow('s', np.hstack([image, S]))
+    cv2.waitKey(0)
 
-    TEN = np.sum(S)
+    TEN = np.average(S)
+    # print('Sobel_x:{}\n\nSx:{}\n\n'.format(Sobel_x, Gx))
+    print('TEN={:2f}\n\n'.format(TEN))
     return (TEN, TEN <= thresh)
-    # TEN = np.square(S)
-    # S_VAR = S.var()
-    # normalize S in range of (0, 255)
-    # S = S / S.max() * 255
-    # theta = np.arctan2(Gy, Gx)
-    # return (S_VAR, S_VAR <= thresh)
-
 
 def calc_laplacian_thresh(image, total):
     lap = utils.variance_of_laplacian(image)
