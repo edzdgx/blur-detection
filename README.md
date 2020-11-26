@@ -9,14 +9,6 @@ Blur detection with different algorithms and parameters
 
 # Blur Detection Accuracy
 
-| Algorithm | Threshold | Window Size | Undistorted* | Naturally Blurred* | Artificially Blurred* |
-| - | - | - | - | - | - |
-| Tenengrad | 10 | 3 | - | - | - |
-| Laplacian | 100 | 3 | 3.02 | 32.27 | 77.33 |
-| LoG | 69 | 3 | - | - | - |
-| FTT | 10 | 60 | - | - | - |
-| FTT | 10 | 80 | 13.97 | 53.18 | 82.67 |
-
 | Algorithm | Threshold | kaggle_sharp* | kaggle_defocused_blur* | kaggle_motion_blur* | CERTH_Undistorted* | CERTH_Blurred* |
 | - | - | - | - | - | - | - |
 | FFT | 10 | 8.57 | 87.71 | 67.71 | 8.25 | 44.32 |
