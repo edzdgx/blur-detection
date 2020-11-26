@@ -52,17 +52,17 @@ def detect_blur_LoG(image, thresh):
 def detect_blur_Tenengrad(image, thresh):
 
     # try using Gaussian to remove noise first
-    image = cv2.GaussianBlur(image, (3,3), 0)
+    # image = cv2.GaussianBlur(image, (3,3), 0)
     Sobel_x=cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=3)
     Sobel_y=cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize=3)
     S = np.hypot(Sobel_x, Sobel_y).astype(np.uint8)
 
-    cv2.imshow('s', np.hstack([image, S]))
-    cv2.waitKey(0)
+    # cv2.imshow('s', np.hstack([image, S]))
+    # cv2.waitKey(0)
 
-    TEN = np.average(S)
+    TEN = np.var(S)
     # print('Sobel_x:{}\n\nSx:{}\n\n'.format(Sobel_x, Gx))
-    print('TEN={:2f}\n\n'.format(TEN))
+    # print('TEN={:2f}'.format(TEN))
     return (TEN, TEN <= thresh)
 
 def calc_laplacian_thresh(image, total):
